@@ -1,3 +1,59 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#090a14"><link rel="manifest" href="/manifest.json"><link rel="stylesheet" href="/style.css"><title>WATCH FRIENDS</title></head><body><header><div class="logo"><span class="mark">W</span> WATCH <b>FRIENDS</b></div><button id="profileBtn">Meu perfil</button></header><main><section id="home" class="hero"><div class="eyebrow">✦ SEU CANTINHO, SUA GALERA</div><h1>Amigos perto.<br><span>Mesmo de longe.</span></h1><p>Crie uma sala privada, converse por voz e dê play junto.</p><div class="actions"><button class="primary" id="create">＋ Criar sala</button><button id="joinToggle">Entrar com código</button></div><div id="joinBox" hidden><input id="roomCode" placeholder="CÓDIGO DA SALA" maxlength="6"><button id="join">Entrar</button></div><div class="features"><article>◉ <b>Salas privadas</b><small>Só quem tem convite</small></article><article>♫ <b>Voz em tempo real</b><small>Converse enquanto assiste</small></article><article>▷ <b>Watch party</b><small>Sincronize o play</small></article></div></section>
-<section id="room" hidden><div class="roomtop"><div><small>SALA PRIVADA</small><h2 id="roomTitle">Sua sala</h2><p>Código: <strong id="codeLabel"></strong> <button id="copy">Copiar</button></p></div><button id="leave">Sair</button></div><div class="layout"><div class="watch"><video id="video" controls playsinline></video><div class="upload"><label class="primary">Escolher vídeo<input type="file" id="file" accept="video/mp4,video/webm,video/ogg" hidden></label><span id="videoName">Escolha um vídeo neste dispositivo</span></div><p class="notice">Para compartilhar o arquivo com todos, configure armazenamento de objetos (S3/R2) no backend.</p></div><aside><h3>Participantes <span id="count">1</span></h3><div id="members"></div><hr><h3>Chat</h3><div id="messages"></div><form id="chatForm"><input id="message" maxlength="500" placeholder="Escreva uma mensagem…"><button class="primary">➤</button></form><hr><h3>Chamada de voz</h3><p id="voiceStatus">Pronto para conectar</p><button id="voice">♩ Entrar na chamada</button><button id="mute" disabled>Microfone: ligado</button></aside></div></section>
-<section id="profile" hidden><h2>Seu perfil</h2><label>Apelido<input id="nickname" maxlength="24" value="Visitante"></label><label>Cor do perfil<input type="color" id="color" value="#8b5cf6"></label><button id="saveProfile" class="primary">Salvar perfil</button><button id="back">Voltar</button></section></main><nav><button data-page="home">⌂ Início</button><button data-page="room">▣ Salas</button><button data-page="profile">◉ Perfil</button></nav><div id="toast"></div><script src="/socket.io/socket.io.js"></script><script src="/app.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FOTO → 3D</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#090b12;--panel:#121622;--line:#252c3d;--muted:#9ba5ba;--accent:#9b7cff;--cyan:#54d9e8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#29204a 0,transparent 50%),var(--bg);color:#f5f6fb;font-family:'DM Sans',sans-serif}
+main{max-width:1080px;margin:auto;padding:34px 22px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:42px}
+.logo{font-weight:800;letter-spacing:-1px;font-size:21px}.logo span{color:var(--accent)}.status{font-size:12px;color:#b8c1d3;border:1px solid var(--line);padding:8px 12px;border-radius:99px}
+.hero{text-align:center;margin-bottom:34px}.eyebrow{color:var(--cyan);font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(36px,7vw,62px);letter-spacing:-3px;line-height:1.02;margin:14px 0}.hero p{color:var(--muted);max-width:590px;margin:0 auto;line-height:1.6}
+.panel{background:linear-gradient(145deg,#151a29,#10141f);border:1px solid var(--line);border-radius:22px;padding:24px;box-shadow:0 24px 80px #0005}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.slot{border:1px dashed #3a4258;background:#0d111b;border-radius:16px;min-height:205px;padding:13px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.slot-head{display:flex;align-items:center;justify-content:space-between;font-weight:700}.num{color:var(--accent);font-size:12px}.preview{height:125px;border-radius:10px;background:linear-gradient(135deg,#1b2232,#111622);display:grid;place-items:center;overflow:hidden;color:#79849c;font-size:13px}
+.preview img{width:100%;height:100%;object-fit:contain}.pick{font-size:12px;color:#d6d9e4;background:#242b3d;border:1px solid #343d53;border-radius:9px;padding:9px;text-align:center;cursor:pointer}.pick:hover{border-color:var(--accent)}
+input[type=file]{display:none}.actions{display:flex;justify-content:center;margin-top:22px}.generate{border:0;border-radius:12px;padding:14px 28px;background:linear-gradient(100deg,#9b7cff,#5b9bff);color:white;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 8px 28px #8062ff40}.generate:disabled{opacity:.45;cursor:not-allowed}
+.note{color:var(--muted);font-size:12px;text-align:center;line-height:1.6;margin:17px auto 0;max-width:700px}.result{margin-top:22px;padding:16px;border-radius:13px;background:#0b101a;border:1px solid var(--line);display:none;line-height:1.5}.result a{color:#bcaaff}.result.error{border-color:#75434b;color:#ffb8c0}
+footer{text-align:center;color:#657087;font-size:11px;margin-top:24px}
+@media(max-width:680px){.steps{grid-template-columns:1fr}.slot{min-height:190px}.preview{height:115px}.top{margin-bottom:30px}main{padding:22px 14px 40px}.panel{padding:16px}h1{letter-spacing:-2px}}
+</style>
+</head>
+<body><main>
+<header class="top"><div class="logo">FOTO <span>→</span> 3D</div><div class="status" id="status">● verificando sistema...</div></header>
+<section class="hero"><div class="eyebrow">Seu estúdio 3D com IA</div><h1>Uma pessoa.<br><span style="color:#a992ff">Vários ângulos.</span></h1><p>Envie fotos de frente, lado e costas para preparar a reconstrução do seu modelo tridimensional.</p></section>
+<section class="panel">
+<div class="steps">
+  <div class="slot"><div class="slot-head"><span>Frente</span><span class="num">01</span></div><div class="preview" id="prev-front">Foto frontal</div><label class="pick" for="front">＋ Escolher foto</label><input id="front" type="file" accept="image/*"></div>
+  <div class="slot"><div class="slot-head"><span>Lado</span><span class="num">02</span></div><div class="preview" id="prev-side">Foto de perfil</div><label class="pick" for="side">＋ Escolher foto</label><input id="side" type="file" accept="image/*"></div>
+  <div class="slot"><div class="slot-head"><span>Costas</span><span class="num">03</span></div><div class="preview" id="prev-back">Foto traseira</div><label class="pick" for="back">＋ Escolher foto</label><input id="back" type="file" accept="image/*"></div>
+</div>
+<div class="actions"><button class="generate" id="go" disabled>GERAR MODELO 3D ✦</button></div>
+<div class="result" id="result"></div>
+<p class="note">Use fotos nítidas, com boa iluminação e o objeto inteiro visível. O resultado depende do modelo de IA conectado. A geração real ainda precisa de um endpoint de IA 3D.</p>
+</section>
+<footer>FOTO → 3D · Projeto experimental</footer>
+</main>
+<script>
+const ids=['front','side','back'];const files={};
+ids.forEach(id=>document.getElementById(id).addEventListener('change',e=>{
+ const f=e.target.files[0];if(!f)return;files[id]=f;
+ const url=URL.createObjectURL(f);document.getElementById('prev-'+id).innerHTML=`<img src="${url}" alt="Prévia ${id}">`;
+ document.getElementById('go').disabled=!ids.every(k=>files[k]);
+}));
+fetch('/api/status').then(r=>r.json()).then(s=>{
+ document.getElementById('status').textContent=s.mode==='connected'?'● IA conectada':'● interface pronta · IA não conectada';
+}).catch(()=>document.getElementById('status').textContent='● servidor indisponível');
+document.getElementById('go').addEventListener('click',async()=>{
+ const btn=document.getElementById('go'),box=document.getElementById('result');btn.disabled=true;btn.textContent='ENVIANDO FOTOS...';box.style.display='block';box.className='result';box.textContent='Preparando suas imagens...';
+ const data=new FormData();ids.forEach(id=>data.append(id,files[id]));
+ try{const r=await fetch('/api/generate',{method:'POST',body:data});const j=await r.json();if(!r.ok)throw new Error(j.error||'Não foi possível gerar o modelo.');
+ box.innerHTML=`Modelo recebido! <a href="${j.model_url}" target="_blank" rel="noopener">Abrir / baixar modelo 3D</a>`;btn.textContent='GERAR OUTRO MODELO ✦';
+ }catch(e){box.className='result error';box.textContent=e.message;btn.textContent='TENTAR NOVAMENTE ✦';}
+ btn.disabled=false;
+});
+</script></body></html>
